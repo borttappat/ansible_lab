@@ -1,0 +1,3 @@
+{% for item in shell_aliases %}
+alias {{ item.alias }}='{{ item.command }}'
+{% endfor %}

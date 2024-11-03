@@ -1,0 +1,35 @@
+---
+- name: Ensure .bashrc exists
+  file:
+    path: "/home/traum/.bashrc"
+    state: touch
+    mode: '0644'
+    owner: "traum"
+    group: "traum"
+
+- name: Add aliases to .bashrc
+  blockinfile:
+    path: "/home/traum/.bashrc"
+    marker: "# {mark} ANSIBLE MANAGED ALIASES"
+    block: |
+      {% for item in shell_aliases %}
+      alias {{ item.alias }}='{{ item.command }}'
+      {% endfor %}
+
+- name: Ensure .bash_profile exists
+  file:
+    path: "/home/traum/.bash_profile"
+    state: touch
+    mode: '0644'
+    owner: "traum"
+    group: "traum"
+
+- name: Add .bashrc source to .bash_profile
+  blockinfile:
+    path: "/home/traum/.bash_profile"
+    marker: "# {mark} ANSIBLE MANAGED BASHRC SOURCE"
+    block: |
+      # Source bashrc if it exists
+      if [ -f ~/.bashrc ]; then
+          . ~/.bashrc
+      fi

@@ -1,0 +1,9 @@
+services:
+  ansible-target:
+    build: .
+    ports:
+      - "2222:22"
+    volumes:
+      - ./ssh/authorized_keys:/root/.ssh/authorized_keys
+      - ~/docker-persist:/home/traum/persist
+    restart: unless-stopped

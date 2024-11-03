@@ -1,0 +1,51 @@
+---
+  shell_aliases:
+  # Git aliases
+  - alias: 'gs'
+    command: 'git status'
+  - alias: 'gp'
+    command: 'git pull'
+  
+  # General aliases
+  - alias: 'll'
+    command: 'ls -la'
+  - alias: 'cls'
+    command: 'clear'
+  
+  # Navigation shortcuts
+  - alias: '..'
+    command: 'cd ..'
+  - alias: '...'
+    command: 'cd ../..'
+  - alias: '....'
+    command: 'cd ../../..'
+  - alias: '.....'
+    command: 'cd ../../../..'
+  - alias: '......'
+    command: 'cd ../../../../..'
+
+  # Directory listing 
+  - alias: 'ls'
+    command: 'eza -A --color=always --group-directories-first --icons'
+  - alias: 'l'
+    command: 'eza -Al --color=always --group-directories-first --icons'
+  - alias: 'lt'
+    command: 'eza -AT --color=always --group-directories-first --icons'
+  - alias: 'sls'
+    command: 'ls | grep -i'
+  - alias: 'sl'
+    command: 'eza -Al --color=always --group-directories-first --icons | grep -i'
+
+  # System utilities
+  - alias: 'grep'
+    command: 'ugrep --color=auto'
+  - alias: 'egrep'
+    command: 'ugrep -E --color=auto'
+  - alias: 'fgrep'
+    command: 'ugrep -F --color=auto'
+  - alias: 'grubup'
+    command: 'sudo update-grub'
+  - alias: 'hw'
+    command: 'hwinfo --short'
+  - alias: 'ip'
+    command: 'ip -color'

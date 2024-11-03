@@ -1,0 +1,10 @@
+---
+# Default user configurations
+users_default:
+  shell: /bin/bash
+  create_home: true
+
+# Groups to be created
+default_groups:
+  - developers
+  - operations

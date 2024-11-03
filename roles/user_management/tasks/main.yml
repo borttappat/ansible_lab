@@ -1,0 +1,46 @@
+---
+- name: Ensure groups exist
+  group:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ default_groups }}"
+
+- name: Create users
+  user:
+    name: "{{ item.username }}"
+    groups: "{{ item.groups | default([]) }}"
+    shell: "{{ item.shell | default(users_default.shell) }}"
+    create_home: "{{ item.create_home | default(users_default.create_home) }}"
+    state: present
+  loop: "{{ users_to_create }}"
+  when: users_to_create is defined
+
+- name: Create .ssh directories
+  file:
+    path: "/home/{{ item.username }}/.ssh"
+    state: directory
+    mode: '0700'
+    owner: "{{ item.username }}"
+    group: "{{ item.username }}"
+  loop: "{{ users_to_create }}"
+  when: users_to_create is defined
+
+- name: Add SSH authorized keys for traum
+  authorized_key:
+    user: traum
+    state: present
+    key: "{{ lookup('file', ssh_keys_path + '/traum/id_rsa.pub') }}"
+
+- name: Add sudo privileges for traum
+  copy:
+    content: "traum ALL=(ALL) NOPASSWD: ALL"
+    dest: /etc/sudoers.d/traum
+    mode: '0440'
+
+- name: Ensure persist directory exists
+  file:
+    path: /home/traum/persist
+    state: directory
+    owner: traum
+    group: traum
+    mode: '0755'

@@ -1,0 +1,21 @@
+---
+- name: Install packages on Arch Linux
+  hosts: managed_nodes
+  become: yes  # This is needed for package installation (sudo)
+  
+  tasks:
+    - name: Update pacman cache
+      pacman:
+        update_cache: yes
+      
+    - name: Install basic packages
+      pacman:
+        name:
+          - vim
+          - htop
+          - git
+          - ugrep
+          - tmate
+          - eza
+          - bat
+        state: present

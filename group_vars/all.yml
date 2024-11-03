@@ -1,0 +1,17 @@
+---
+users_to_create:
+  - username: developer1
+    groups: ["developers"]
+  - username: ops1
+    groups: ["operations"]
+  - username: admin1
+    groups: ["developers", "operations"]
+  - username: traum  
+    groups: ["developers"]
+    #shell: /usr/bin/zsh  
+    shell: /bin/bash
+    create_home: true
+    home: /home/traum  # Custom home directory (if needed)
+    comment: "Main DevOps User"  # Adding a user comment/description
+
+ssh_keys_path: "{{ playbook_dir }}/../docker/ssh"
