@@ -1,4 +1,43 @@
 ---
+# Gather facts about the system
+- name: Gather OS facts
+  setup:
+    gather_subset:
+      - '!all'
+      - '!min'
+      - 'distribution'
+
+# Package management tasks for Arch Linux
+- block:
+    - name: Update pacman cache
+      pacman:
+        update_cache: yes
+
+    - name: Install basic packages
+      pacman:
+        name: 
+          - zsh
+          - sudo
+          - vim
+        state: present
+  when: ansible_facts['os_family'] == "Archlinux"
+
+# Package management tasks for Ubuntu
+- block:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install basic packages
+      apt:
+        name:
+          - zsh
+          - sudo
+          - vim
+        state: present
+  when: ansible_facts['os_family'] == "Debian"
+
+# Rest of your tasks remain the same
 - name: Ensure groups exist
   group:
     name: "{{ item }}"

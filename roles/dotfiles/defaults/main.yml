@@ -1,18 +1,12 @@
 ---
-  shell_aliases:
+# This should go in roles/dotfiles/defaults/main.yml
+shell_aliases_common:
   # Git aliases
   - alias: 'gs'
     command: 'git status'
   - alias: 'gp'
     command: 'git pull'
-  
-  # General aliases
-  - alias: 'll'
-    command: 'ls -la'
-  - alias: 'cls'
-    command: 'clear'
-  
-  # Navigation shortcuts
+  # Navigation aliases
   - alias: '..'
     command: 'cd ..'
   - alias: '...'
@@ -23,29 +17,46 @@
     command: 'cd ../../../..'
   - alias: '......'
     command: 'cd ../../../../..'
+  # Common aliases
+  - alias: 'll'
+    command: 'ls -la'
+  - alias: 'cls'
+    command: 'clear'
+  - alias: 'ip'
+    command: 'ip -color'
 
-  # Directory listing 
+shell_aliases_arch:
+  # Arch-specific ls aliases using eza
   - alias: 'ls'
     command: 'eza -A --color=always --group-directories-first --icons'
   - alias: 'l'
     command: 'eza -Al --color=always --group-directories-first --icons'
   - alias: 'lt'
     command: 'eza -AT --color=always --group-directories-first --icons'
-  - alias: 'sls'
-    command: 'ls | grep -i'
   - alias: 'sl'
     command: 'eza -Al --color=always --group-directories-first --icons | grep -i'
-
-  # System utilities
+  # Arch-specific grep aliases
   - alias: 'grep'
     command: 'ugrep --color=auto'
   - alias: 'egrep'
     command: 'ugrep -E --color=auto'
   - alias: 'fgrep'
     command: 'ugrep -F --color=auto'
-  - alias: 'grubup'
-    command: 'sudo update-grub'
-  - alias: 'hw'
-    command: 'hwinfo --short'
-  - alias: 'ip'
-    command: 'ip -color'
+
+shell_aliases_ubuntu:
+  # Ubuntu-specific ls aliases using exa
+  - alias: 'ls'
+    command: 'exa --icons'
+  - alias: 'l'
+    command: 'exa -l --icons'
+  - alias: 'lt'
+    command: 'exa -T --icons'
+  - alias: 'sl'
+    command: 'exa -l --icons | grep -i'
+  # Ubuntu-specific grep aliases
+  - alias: 'grep'
+    command: 'ripgrep --color=auto'
+  - alias: 'egrep'
+    command: 'ripgrep -E --color=auto'
+  - alias: 'fgrep'
+    command: 'ripgrep -F --color=auto'

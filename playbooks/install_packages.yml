@@ -1,21 +1,44 @@
 ---
-- name: Install packages on Arch Linux
+- name: Install packages on all systems
   hosts: managed_nodes
-  become: yes  # This is needed for package installation (sudo)
-  
+  become: yes
+
   tasks:
-    - name: Update pacman cache
-      pacman:
-        update_cache: yes
-      
-    - name: Install basic packages
-      pacman:
-        name:
-          - vim
-          - htop
-          - git
-          - ugrep
-          - tmate
-          - eza
-          - bat
-        state: present
+    # Arch Linux packages
+    - block:
+        - name: Update pacman cache
+          pacman:
+            update_cache: yes
+          
+        - name: Install Arch Linux packages
+          pacman:
+            name:
+              - vim
+              - htop
+              - git
+              - ugrep
+              - tmate
+              - eza
+              - bat
+            state: present
+      when: ansible_facts['os_family'] == "Archlinux"
+
+    # Ubuntu packages
+    - block:
+        - name: Update apt cache
+          apt:
+            update_cache: yes
+          
+        - name: Install Ubuntu packages
+          apt:
+            name:
+              - vim
+              - htop
+              - git
+              - ripgrep
+              - tmate
+              - exa
+              - bat
+              - neofetch
+            state: present
+      when: ansible_facts['os_family'] == "Debian"

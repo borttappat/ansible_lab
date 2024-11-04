@@ -1,4 +1,5 @@
 ---
+# roles/dotfiles/tasks/main.yml
 - name: Ensure .bashrc exists
   file:
     path: "/home/traum/.bashrc"
@@ -7,29 +8,34 @@
     owner: "traum"
     group: "traum"
 
-- name: Add aliases to .bashrc
+# Add common aliases first
+- name: Add common aliases
   blockinfile:
     path: "/home/traum/.bashrc"
-    marker: "# {mark} ANSIBLE MANAGED ALIASES"
+    marker: "# {mark} ANSIBLE MANAGED COMMON ALIASES"
     block: |
-      {% for item in shell_aliases %}
+      {% for item in shell_aliases_common %}
       alias {{ item.alias }}='{{ item.command }}'
       {% endfor %}
 
-- name: Ensure .bash_profile exists
-  file:
-    path: "/home/traum/.bash_profile"
-    state: touch
-    mode: '0644'
-    owner: "traum"
-    group: "traum"
-
-- name: Add .bashrc source to .bash_profile
+# Add Arch-specific aliases
+- name: Add Arch Linux aliases
   blockinfile:
-    path: "/home/traum/.bash_profile"
-    marker: "# {mark} ANSIBLE MANAGED BASHRC SOURCE"
+    path: "/home/traum/.bashrc"
+    marker: "# {mark} ANSIBLE MANAGED ARCH ALIASES"
     block: |
-      # Source bashrc if it exists
-      if [ -f ~/.bashrc ]; then
-          . ~/.bashrc
-      fi
+      {% for item in shell_aliases_arch %}
+      alias {{ item.alias }}='{{ item.command }}'
+      {% endfor %}
+  when: ansible_facts['os_family'] == "Archlinux"
+
+# Add Ubuntu-specific aliases
+- name: Add Ubuntu aliases
+  blockinfile:
+    path: "/home/traum/.bashrc"
+    marker: "# {mark} ANSIBLE MANAGED UBUNTU ALIASES"
+    block: |
+      {% for item in shell_aliases_ubuntu %}
+      alias {{ item.alias }}='{{ item.command }}'
+      {% endfor %}
+  when: ansible_facts['os_family'] == "Debian"
