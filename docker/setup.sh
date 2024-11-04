@@ -1,22 +1,29 @@
 #!/bin/bash
 set -e
 
-# Create SSH directory if it doesn't exist
+# Create SSH directories
 mkdir -p ssh
+mkdir -p ssh/traum
 
 # Set directory permissions first
 chmod 700 ssh
+chmod 700 ssh/traum
 
-# Generate SSH key pair if it doesn't exist
+# Generate root SSH key pair if it doesn't exist
 if [ ! -f ssh/id_rsa ]; then
     ssh-keygen -t rsa -b 4096 -f ssh/id_rsa -N ""
 fi
 
-# Set file permissions before copying
-chmod 600 ssh/id_rsa
-chmod 644 ssh/id_rsa.pub
+# Generate traum user SSH key pair if it doesn't exist
+if [ ! -f ssh/traum/id_rsa ]; then
+    ssh-keygen -t rsa -b 4096 -f ssh/traum/id_rsa -N "" -C "traum@ansible-practice"
+fi
 
-# Copy public key to authorized_keys and set its permissions
+# Set file permissions
+chmod 600 ssh/id_rsa ssh/traum/id_rsa
+chmod 644 ssh/id_rsa.pub ssh/traum/id_rsa.pub
+
+# Copy public keys to authorized_keys
 cp ssh/id_rsa.pub ssh/authorized_keys
 chmod 644 ssh/authorized_keys
 

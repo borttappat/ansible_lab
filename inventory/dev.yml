@@ -1,9 +1,18 @@
 all:
   children:
     managed_nodes:
-      hosts:
-        ansible-target:
-          ansible_host: localhost
-          ansible_port: 2222
-          ansible_user: root
-          ansible_ssh_private_key_file: docker/ssh/id_rsa
+      children:
+        arch_nodes:
+          hosts:
+            ansible-arch:
+              ansible_host: localhost
+              ansible_port: 2222
+              ansible_user: root
+              ansible_ssh_private_key_file: docker/ssh/id_rsa
+        ubuntu_nodes:
+          hosts:
+            ansible-ubuntu:
+              ansible_host: localhost
+              ansible_port: 2223
+              ansible_user: root
+              ansible_ssh_private_key_file: docker/ssh/id_rsa
