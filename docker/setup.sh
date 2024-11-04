@@ -20,19 +20,28 @@ chmod 644 ssh/id_rsa.pub
 cp ssh/id_rsa.pub ssh/authorized_keys
 chmod 644 ssh/authorized_keys
 
-# Build and start the container
+# Create persistent directories
+mkdir -p ~/docker-persist/{arch,ubuntu}
+
+# Build and start the containers
 docker compose up --build -d
 
-# Wait a moment for container to start
+# Wait a moment for containers to start
 sleep 2
 
-# Fix permissions inside the container
-docker exec docker-ansible-target-1 /bin/bash -c "chmod 700 /root/.ssh && chmod 600 /root/.ssh/authorized_keys && chown root:root /root/.ssh/authorized_keys"
+# Fix permissions inside the containers
+docker exec docker-arch-1 /bin/bash -c "chmod 700 /root/.ssh && chmod 600 /root/.ssh/authorized_keys && chown root:root /root/.ssh/authorized_keys"
+docker exec docker-ubuntu-1 /bin/bash -c "chmod 700 /root/.ssh && chmod 600 /root/.ssh/authorized_keys && chown root:root /root/.ssh/authorized_keys"
 
 # Wait for SSH to be available
-echo "Waiting for SSH to be available..."
-until ssh -o StrictHostKeyChecking=no -p 2222 -i ssh/id_rsa root@localhost echo "SSH is ready"; do
+echo "Waiting for Arch container SSH..."
+until ssh -o StrictHostKeyChecking=no -p 2222 -i ssh/id_rsa root@localhost echo "Arch SSH is ready"; do
     sleep 1
 done
 
-echo "Container is ready for Ansible!"
+echo "Waiting for Ubuntu container SSH..."
+until ssh -o StrictHostKeyChecking=no -p 2223 -i ssh/id_rsa root@localhost echo "Ubuntu SSH is ready"; do
+    sleep 1
+done
+
+echo "Both containers are ready for Ansible!"

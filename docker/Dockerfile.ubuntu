@@ -1,3 +1,4 @@
+# Dockerfile.ubuntu
 FROM ubuntu:22.04
 
 # Install required packages
@@ -5,9 +6,13 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
     openssh-server \
     python3 \
+    python3-pip \
     sudo \
     zsh \
-    && rm -rf /var/lib/apt/lists/*
+    build-essential \
+    git \
+    vim && \
+    rm -rf /var/lib/apt/lists/*
 
 # SSH Server setup
 RUN mkdir /var/run/sshd
@@ -17,8 +22,11 @@ RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/s
 # Create required directories
 RUN mkdir -p /root/.ssh
 
-# Expose SSH port
-EXPOSE 22
+# Generate SSH host keys with force overwrite
+RUN rm -f /etc/ssh/ssh_host_*_key*
+RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''
+RUN ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N ''
+RUN ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
 
-# Start SSH server
+EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]

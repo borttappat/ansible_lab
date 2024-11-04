@@ -1,9 +1,25 @@
+version: '3.8'
 services:
-  ansible-target:
-    build: .
+  arch:
+    build: 
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "2222:22"
     volumes:
       - ./ssh/authorized_keys:/root/.ssh/authorized_keys
-      - ~/docker-persist:/home/traum/persist
+      - ~/docker-persist/arch:/home/traum/persist
+    hostname: ansible-arch
+    restart: unless-stopped
+
+  ubuntu:
+    build:
+      context: .
+      dockerfile: Dockerfile.ubuntu
+    ports:
+      - "2223:22"
+    volumes:
+      - ./ssh/authorized_keys:/root/.ssh/authorized_keys
+      - ~/docker-persist/ubuntu:/home/traum/persist
+    hostname: ansible-ubuntu
     restart: unless-stopped
