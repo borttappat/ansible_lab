@@ -1,0 +1,27 @@
+FROM alpine:latest
+
+# Install required packages
+RUN apk add --no-cache \
+    openssh \
+    python3 \
+    py3-pip \
+    sudo \
+    zsh \
+    git \
+    vim \
+    build-base \
+    alpine-sdk
+
+# SSH Server setup
+RUN mkdir /var/run/sshd
+RUN echo 'PermitRootLogin prohibit-password' >> /etc/ssh/sshd_config
+RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+
+# Create required directories
+RUN mkdir -p /root/.ssh
+
+# Generate SSH host keys
+RUN ssh-keygen -A
+
+EXPOSE 22
+CMD ["/usr/sbin/sshd", "-D"]

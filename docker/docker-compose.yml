@@ -23,3 +23,15 @@ services:
       - ~/docker-persist/ubuntu:/home/traum/persist
     hostname: ansible-ubuntu
     restart: unless-stopped
+
+  rhel:
+    build:
+      context: .
+      dockerfile: Dockerfile.rhel
+    ports:
+      - "2224:22"
+    volumes:
+      - ./ssh/authorized_keys:/root/.ssh/authorized_keys
+      - ~/docker-persist/rhel:/home/traum/persist
+    hostname: ansible-rhel
+    restart: unless-stopped

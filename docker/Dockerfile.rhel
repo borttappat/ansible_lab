@@ -1,0 +1,40 @@
+FROM redhat/ubi9:latest
+
+# Enable EPEL repository first
+RUN dnf -y install \
+    https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm \
+    && dnf -y update
+
+# Install required packages
+RUN dnf -y install --skip-broken \
+    openssh-server \
+    python3 \
+    python3-pip \
+    sudo \
+    zsh \
+    git \
+    vim \
+    gcc \
+    gcc-c++ \
+    make \
+    ripgrep \
+    bat \
+    htop \
+    tmate \
+    && dnf clean all
+
+# SSH Server setup
+RUN mkdir /var/run/sshd
+RUN echo 'PermitRootLogin prohibit-password' >> /etc/ssh/sshd_config
+RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+
+# Create required directories
+RUN mkdir -p /root/.ssh
+
+# Generate SSH host keys
+RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''
+RUN ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N ''
+RUN ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
+
+EXPOSE 22
+CMD ["/usr/sbin/sshd", "-D"]

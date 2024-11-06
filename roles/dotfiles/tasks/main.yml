@@ -1,14 +1,45 @@
 ---
-# roles/dotfiles/tasks/main.yml
-- name: Ensure .bashrc exists
+# Ensure all necessary files exist
+- name: Ensure shell config files exist
   file:
-    path: "/home/traum/.bashrc"
+    path: "/home/traum/{{ item }}"
     state: touch
     mode: '0644'
     owner: "traum"
     group: "traum"
+  loop:
+    - .bashrc
+    - .bash_profile
+    - .zshrc
+    - .profile
 
-# Add common aliases first
+# Configure shell initialization
+- name: Configure shell initialization files
+  blockinfile:
+    path: "/home/traum/{{ item.file }}"
+    marker: "# {mark} ANSIBLE MANAGED SHELL INIT"
+    block: "{{ item.content }}"
+  loop:
+    - file: .bash_profile
+      content: |
+        # Source .bashrc if it exists
+        if [ -f ~/.bashrc ]; then
+            . ~/.bashrc
+        fi
+    - file: .profile
+      content: |
+        # Source .bashrc if running bash
+        if [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ]; then
+            . "$HOME/.bashrc"
+        fi
+    - file: .zshrc
+      content: |
+        # Source .bashrc for compatibility if it exists
+        if [ -f ~/.bashrc ]; then
+            . ~/.bashrc
+        fi
+
+# Add common aliases
 - name: Add common aliases
   blockinfile:
     path: "/home/traum/.bashrc"
@@ -18,7 +49,7 @@
       alias {{ item.alias }}='{{ item.command }}'
       {% endfor %}
 
-# Add Arch-specific aliases
+# Add distribution-specific aliases
 - name: Add Arch Linux aliases
   blockinfile:
     path: "/home/traum/.bashrc"
@@ -29,7 +60,6 @@
       {% endfor %}
   when: ansible_facts['os_family'] == "Archlinux"
 
-# Add Ubuntu-specific aliases
 - name: Add Ubuntu aliases
   blockinfile:
     path: "/home/traum/.bashrc"
@@ -39,3 +69,39 @@
       alias {{ item.alias }}='{{ item.command }}'
       {% endfor %}
   when: ansible_facts['os_family'] == "Debian"
+
+- name: Add RHEL aliases
+  blockinfile:
+    path: "/home/traum/.bashrc"
+    marker: "# {mark} ANSIBLE MANAGED RHEL ALIASES"
+    block: |
+      {% for item in shell_aliases_rhel %}
+      alias {{ item.alias }}='{{ item.command }}'
+      {% endfor %}
+  when: ansible_facts['os_family'] == "RedHat"
+
+# Ensure the shell environment is properly set up
+- name: Add shell configuration to .bashrc
+  blockinfile:
+    path: "/home/traum/.bashrc"
+    marker: "# {mark} ANSIBLE MANAGED SHELL SETTINGS"
+    block: |
+      # If not running interactively, don't do anything
+      [[ $- != *i* ]] && return
+
+      # Shell Options
+      shopt -s checkwinsize
+      shopt -s histappend
+
+      # History settings
+      HISTSIZE=1000
+      HISTFILESIZE=2000
+      HISTCONTROL=ignoreboth
+
+      # Set proper prompt
+      PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+
+      # Enable color support
+      if [ -x /usr/bin/dircolors ]; then
+          test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+      fi
