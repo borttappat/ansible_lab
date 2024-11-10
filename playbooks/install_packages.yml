@@ -20,6 +20,8 @@
               - tmate
               - eza
               - bat
+              - hashcat
+              - john
             state: present
       when: ansible_facts['os_family'] == "Archlinux"
 
